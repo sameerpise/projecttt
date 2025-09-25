@@ -1,0 +1,7 @@
+1.add Purcing/current Year which year student is Purcing field
+2.city/pincode,
+3.collage name
+
+samypise5_db_user
+aNSOvezt0cXQBTwD
+mongodb+srv://samypise5_db_user:aNSOvezt0cXQBTwD@cluster0.vdcvbq3.mongodb.net/
