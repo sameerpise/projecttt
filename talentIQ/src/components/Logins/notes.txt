@@ -5,3 +5,10 @@
 samypise5_db_user
 aNSOvezt0cXQBTwD
 mongodb+srv://samypise5_db_user:aNSOvezt0cXQBTwD@cluster0.vdcvbq3.mongodb.net/
+
+
+
+colore code
+yeloww = #f6ae22
+black=#272425
+white=#eeeeee

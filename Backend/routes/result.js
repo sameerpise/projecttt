@@ -42,8 +42,17 @@ router.post("/save", async (req, res) => {
 
     const score = correctAnswers;
 
-    const result = new Result({ studentId, questionIds, answers, score, correctAnswers, wrongAnswers, notAnswered, attempt: student.retestCount + 1, });
-    await result.save();
+      let result = await Result.findOne({ studentId });
+    if (student.retestCount > 0 && result) {
+      // Retest
+      result.retestAnswers = answers;
+      result.retestScore = score;
+      await result.save();
+    } else {
+      // Original attempt
+      result = new Result({ studentId, questionIds, answers, score, correctAnswers, wrongAnswers, notAnswered });
+      await result.save();
+    }
 
     student.testGiven = true;
     await student.save();
@@ -101,13 +110,19 @@ router.post("/retest/:studentId", async (req, res) => {
     const student = await Student.findById(studentId);
     if (!student) return res.status(404).json({ error: "Student not found" });
 
+
+
+
+
+    
     // ✅ Check max attempts
     if (student.retestCount >= 2) {
       return res.status(403).json({ error: "Student has reached maximum test attempts" });
     }
 
     // Delete previous results
-    await Result.deleteMany({ studentId });
+    
+   // await Result.deleteMany({ studentId });
 
     // Unlock student for re-test
     student.testGiven = false;

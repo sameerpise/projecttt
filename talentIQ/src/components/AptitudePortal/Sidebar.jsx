@@ -1,10 +1,9 @@
 import React from "react";
-import { Box, Typography, Button, Avatar, Divider, LinearProgress, Stack, Chip } from "@mui/material";
+import { Box, Typography, Button, Avatar, Divider, Chip } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/studentSlice";
-import { Link } from "react-router-dom";
 
-export default function Sidebar() {
+export default function Sidebar({ open = true }) {
   const dispatch = useDispatch();
   const student = useSelector((state) => state.student.student);
 
@@ -16,39 +15,42 @@ export default function Sidebar() {
   return (
     <Box
       sx={{
-        width: 200,
-        height: "100vh",
-         background: "linear-gradient(180deg, #2193b0 0%, #6dd5ed 100%)",
+        width: { xs: open ? "70%" : 0, sm: 200 }, // collapsible on mobile
+        minWidth: { xs: 0, sm: 200 },
+        height: "110vh",
+        background: "linear-gradient(180deg, #2193b0 0%, #6dd5ed 100%)",
         color: "white",
-        p: 3,
+        p: { xs: 2, sm: 3 },
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
-        borderRadius: 3,
+        borderRadius: { xs: 0, sm: 3 },
+        transition: "all 0.3s",
+        overflowX: "hidden",
       }}
     >
       {/* Profile Section */}
-      <Box sx={{ textAlign: "center" }}>
+      <Box sx={{ textAlign: "center", mb: 2 }}>
         <Avatar
           alt={student?.fullName || "Student"}
           src="/profile.png"
           sx={{
-            width: 100,
-            height: 100,
+            width: { xs: 80, sm: 100 },
+            height: { xs: 80, sm: 100 },
             mx: "auto",
-            mb: 2,
+            mb: 1,
             border: "4px solid white",
             boxShadow: "0 6px 15px rgba(0,0,0,0.4)",
           }}
         />
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: { xs: 14, sm: 16 } }}>
           {student?.fullName || "Student Name"}
         </Typography>
-        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+        <Typography variant="body2" sx={{ opacity: 0.9, fontSize: { xs: 12, sm: 14 } }}>
           {student?.email || "email@example.com"}
         </Typography>
-        <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
+        <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5, fontSize: { xs: 12, sm: 14 } }}>
           🎓 {student?.college || "College Name"}
         </Typography>
 
@@ -60,57 +62,11 @@ export default function Sidebar() {
             bgcolor: "green",
             color: "white",
             fontWeight: "bold",
+            fontSize: { xs: 10, sm: 12 },
           }}
         />
 
-        <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)", my: 3 }} />
-
-        {/* Quick Stats */}
-        {/* <Box sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
-            Profile Progress
-          </Typography>
-          <LinearProgress
-            variant="determinate"
-            value={70} // dynamic value
-            sx={{
-              height: 8,
-              borderRadius: 5,
-              bgcolor: "rgba(255,255,255,0.3)",
-              "& .MuiLinearProgress-bar": { bgcolor: "#fff" },
-            }}
-          />
-        </Box> */}
-
-        {/* <Stack spacing={1} sx={{ mb: 3 }}>
-          <Typography variant="body2">
-            ✅ Aptitude Completed: <strong>3/5</strong>
-          </Typography>
-          <Typography variant="body2">
-            💻 Machine Coding Score: <strong>85%</strong>
-          </Typography>
-          <Typography variant="body2">
-            🗣 Group Discussion: <strong>Pending</strong>
-          </Typography>
-        </Stack> */}
-
         <Divider sx={{ bgcolor: "rgba(255,255,255,0.3)", my: 2 }} />
-
-        {/* Navigation */}
-        {/* <Stack spacing={1}>
-          <Button component={Link} to="/dashboard" variant="outlined" sx={{ color: "white", borderColor: "white", "&:hover": { bgcolor: "rgba(255,255,255,0.2)" } }}>
-            Dashboard
-          </Button>
-          <Button component={Link} to="/apti" variant="outlined" sx={{ color: "white", borderColor: "white", "&:hover": { bgcolor: "rgba(255,255,255,0.2)" } }}>
-            Aptitude
-          </Button>
-          <Button component={Link} to="/gd" variant="outlined" sx={{ color: "white", borderColor: "white", "&:hover": { bgcolor: "rgba(255,255,255,0.2)" } }}>
-            Group Discussion
-          </Button>
-          <Button component={Link} to="/machine" variant="outlined" sx={{ color: "white", borderColor: "white", "&:hover": { bgcolor: "rgba(255,255,255,0.2)" } }}>
-            Machine Coding
-          </Button>
-        </Stack> */}
       </Box>
 
       {/* Logout */}
@@ -119,10 +75,11 @@ export default function Sidebar() {
         onClick={handleLogout}
         sx={{
           mt: 2,
-          py: 1.2,
-          borderRadius: 3,
+          py: { xs: 0.8, sm: 1.2 },
+          borderRadius: { xs: 1.5, sm: 3 },
           fontWeight: "bold",
           bgcolor: "#ff4b5c",
+          fontSize: { xs: 12, sm: 14 },
           "&:hover": { bgcolor: "#ff2e44" },
           transition: "0.3s",
         }}

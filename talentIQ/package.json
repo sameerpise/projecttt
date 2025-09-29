@@ -14,7 +14,9 @@
     "@emotion/styled": "^11.14.1",
     "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^7.3.2",
+    "@mui/lab": "^7.0.0-beta.17",
     "@mui/material": "^7.3.2",
+    "@mui/x-date-pickers": "^8.12.0",
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
@@ -24,6 +26,8 @@
     "express": "^5.1.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.23.19",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "mongoose": "^8.18.1",
     "nodemon": "^3.1.10",
     "react": "^19.1.1",
@@ -31,7 +35,9 @@
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.1",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "recharts": "^3.2.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",

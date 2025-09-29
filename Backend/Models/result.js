@@ -7,8 +7,11 @@ const resultSchema = new mongoose.Schema(
     answers: [{ type: String, required: false }],
     score: { type: Number, default: 0 },
     correctAnswers: { type: Number, default: 0 },
+    retestScore: { type: Number, default: 0 },
     wrongAnswers: { type: Number, default: 0 },
     notAnswered: { type: Number, default: 0 },
+     retestAnswers: [{ type: String }],  //added neli           // Retest answers
+       // Retest score
   },
   { timestamps: true }
 );

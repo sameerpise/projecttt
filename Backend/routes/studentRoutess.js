@@ -56,5 +56,13 @@ router.get("/profile", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
+router.get("/", async (req, res) => {
+  try {
+    const students = await Student.find().sort({ fullName: 1 });
+    res.json(students);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch students" });
+  }
+});
 module.exports = router;

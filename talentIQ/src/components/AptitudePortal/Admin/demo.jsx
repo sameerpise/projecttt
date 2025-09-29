@@ -1,159 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  Typography,
   Paper,
+  Avatar,
+  Typography,
+  Button,
+  Grid,
+  Card,
+  CardContent,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
   TableRow,
-  CircularProgress,
+  TableCell,
+  TableBody,
+  TableContainer,
   TablePagination,
   TextField,
-  Button,
   Modal,
   Divider,
   Tooltip,
-  Avatar,
-  Grid,
-  Card, 
-   InputAdornment,
-  CardContent,
+  CircularProgress,
 } from "@mui/material";
-import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import SearchIcon from "@mui/icons-material/Search";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import { saveAs } from "file-saver";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import StudentList from "./StudentList";
+import QuestionManager from "./QuestionManager";
 import { useNavigate } from "react-router-dom";
-import QuestionManager from "./SetTest";
 
-// --- StudentList Component ---
-export  function StudentList() {
-  const [students, setStudents] = useState([]);
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-
-  const fetchStudents = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/students");
-      const data = await res.json();
-      setStudents(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchResults = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/results");
-      const data = await res.json();
-      setResults(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    Promise.all([fetchStudents(), fetchResults()]).finally(() =>
-      setLoading(false)
-    );
-  }, []);
-
-  const hasAppeared = (studentId) =>
-    results.some((r) => r.studentId?._id === studentId);
-
-  // --- Filtered students based on search ---
-  const filteredStudents = students.filter((student) => {
-    const term = search.toLowerCase();
-    return (
-      student.fullName.toLowerCase().includes(term) ||
-      student.email.toLowerCase().includes(term) ||
-      (student.mobile && student.mobile.includes(term))
-    );
-  });
-
-  if (loading)
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
-        <CircularProgress />
-      </Box>
-    );
-
-  return (
-    <Box sx={{ p: 3, bgcolor: "#f4f6f8", minHeight: "100vh" }}>
-      <Typography variant="h5" sx={{ mb: 3 }}>
-        Students List
-      </Typography>
-
-      {/* Search Field */}
-      <TextField
-        placeholder="Search by name, email, or mobile"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        fullWidth
-        sx={{ mb: 3, bgcolor: "#fff", borderRadius: 2 }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon color="action" />
-            </InputAdornment>
-          ),
-        }}
-      />
-
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead sx={{ bgcolor: "#1976d2" }}>
-            <TableRow>
-              <TableCell sx={{ color: "#fff" }}>Name</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Email</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Mobile</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Department</TableCell>
-              <TableCell sx={{ color: "#fff" }}>College</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Year</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Test Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredStudents.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  No students found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredStudents.map((student) => (
-                <TableRow key={student._id}>
-                  <TableCell>{student.fullName}</TableCell>
-                  <TableCell>{student.email}</TableCell>
-                  <TableCell>{student.mobile || "—"}</TableCell>
-                  <TableCell>{student.department || "—"}</TableCell>
-                  <TableCell>{student.college || "—"}</TableCell>
-                  <TableCell>{student.pursuingYear || "—"}</TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: "bold",
-                      color: hasAppeared(student._id) ? "green" : "red",
-                    }}
-                  >
-                    {hasAppeared(student._id) ? "Appeared" : "Not Appeared"}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
-  );
-}
-
-// --- AdminPortal Component ---
-export default function AdminPortal() {
+export  function AdminPortal() {
   const [view, setView] = useState("dashboard");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -370,88 +244,74 @@ export default function AdminPortal() {
               <Button variant="contained" color="success" startIcon={<SaveAltIcon />} onClick={handleExportCSV}>Export CSV</Button>
             </Box>
 
-<TableContainer component={Paper} sx={{ borderRadius: 2, overflowX: "auto" }}>
-  <Table size="small">
-    <TableHead sx={{ bgcolor: "#1976d2" }}>
-      <TableRow>
-        <TableCell sx={{ color: "#fff" }}>Student</TableCell>
-        <TableCell sx={{ color: "#fff" }}>Email</TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>Score</TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>Total</TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>Correct</TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>Wrong</TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>Not Answered</TableCell>
-        <TableCell sx={{ color: "#fff", textAlign: "center" }}>Percentage</TableCell>
-        <TableCell sx={{ color: "#fff" }}>Retest Count</TableCell>
-        <TableCell sx={{ color: "#fff" }}>Actions</TableCell>
-      </TableRow>
-    </TableHead>
+            <TableContainer component={Paper} sx={{ borderRadius: 2, overflowX: "auto" }}>
+              <Table size="small">
+                <TableHead sx={{ bgcolor: "#1976d2" }}>
+                  <TableRow>
+                    <TableCell sx={{ color: "#fff", cursor: "pointer" }} onClick={() => handleSort("student")}>Student</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Email</TableCell>
+                    <TableCell sx={{ color: "#fff", cursor: "pointer" }} onClick={() => handleSort("score")}>Score</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Total</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Correct</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Wrong</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Not Answered</TableCell>
+                    <TableCell sx={{ color: "#fff", cursor: "pointer" }} onClick={() => handleSort("percentage")}>Percentage</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Retest</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
 
-    <TableBody>
-      {paginatedResults.length === 0 ? (
-        <TableRow>
-          <TableCell colSpan={10} align="center">No results found</TableCell>
-        </TableRow>
-      ) : (
-        paginatedResults.map((r) => {
-          const s = getStats(r);
-          const sRetest = r.retestScore !== undefined ? getStats(r, true) : { score: "-", total: "-", correct: "-", wrong: "-", unanswered: "-", percentage: "-" };
-          const student = r.studentId ?? r.student;
-          const maxAttemptsReached = student.retestCount >= 2;
+                <TableBody>
+                  {paginatedResults.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={10} align="center">No results found</TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedResults.map((r) => {
+                      const s = getStats(r);
+                      const sRetest = r.retestScore !== undefined ? getStats(r, true) : null;
+                      const student = r.studentId ?? r.student;
+                      const maxAttemptsReached = student.retestCount >= 2;
 
-          return (
-            <TableRow key={r._id}>
-              <TableCell>{student?.fullName}</TableCell>
-              <TableCell>{student?.email ?? "—"}</TableCell>
+                      return (
+                        <React.Fragment key={r._id}>
+                          <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                            <TableCell rowSpan={sRetest ? 2 : 1}>{student?.fullName}</TableCell>
+                            <TableCell rowSpan={sRetest ? 2 : 1}>{student?.email ?? "—"}</TableCell>
+                            <TableCell sx={{ fontWeight: "bold", color: getScoreColor(s.score) }}>{s.score}</TableCell>
+                            <TableCell>{s.total}</TableCell>
+                            <TableCell sx={{ color: "green", fontWeight: "bold" }}>{s.correct}</TableCell>
+                            <TableCell sx={{ color: "red", fontWeight: "bold" }}>{s.wrong}</TableCell>
+                            <TableCell sx={{ color: "orange", fontWeight: "bold" }}>{s.unanswered}</TableCell>
+                            <TableCell sx={{ color: "blue", fontWeight: "bold" }}>{s.percentage}%</TableCell>
+                            <TableCell rowSpan={sRetest ? 2 : 1}>{student?.retestCount ?? 0}</TableCell>
+                            <TableCell rowSpan={sRetest ? 2 : 1}>
+                              <Button size="small" onClick={() => { setSelectedStudent(r); setOpenModal(true); }}>View</Button>
+                              <Tooltip title={maxAttemptsReached ? "Max attempts reached" : ""} arrow>
+                                <span>
+                                  <Button size="small" color="warning" sx={{ ml: 1 }} onClick={() => handleRetest(student._id)} disabled={maxAttemptsReached}>Re-test</Button>
+                                </span>
+                              </Tooltip>
+                            </TableCell>
+                          </TableRow>
 
-              <TableCell>
-                <div>Original: <strong style={{ color: getScoreColor(s.score) }}>{s.score}</strong></div>
-                <div>Retest: <strong style={{ color: getScoreColor(sRetest.score) }}>{sRetest.score}</strong></div>
-              </TableCell>
-
-              <TableCell>
-                <div>Original: {s.total}</div>
-                <div>Retest: {sRetest.total}</div>
-              </TableCell>
-
-              <TableCell>
-                <div style={{ color: "green", fontWeight: "bold" }}>Original: {s.correct}</div>
-                <div style={{ color: "green", fontWeight: "bold" }}>Retest: {sRetest.correct}</div>
-              </TableCell>
-
-              <TableCell>
-                <div style={{ color: "red", fontWeight: "bold" }}>Original: {s.wrong}</div>
-                <div style={{ color: "red", fontWeight: "bold" }}>Retest: {sRetest.wrong}</div>
-              </TableCell>
-
-              <TableCell>
-                <div style={{ color: "orange", fontWeight: "bold" }}>Original: {s.unanswered}</div>
-                <div style={{ color: "orange", fontWeight: "bold" }}>Retest: {sRetest.unanswered}</div>
-              </TableCell>
-
-              <TableCell>
-                <div style={{ color: "blue", fontWeight: "bold" }}>Original: {s.percentage}%</div>
-                <div style={{ color: "blue", fontWeight: "bold" }}>Retest: {sRetest.percentage}%</div>
-              </TableCell>
-
-              <TableCell>{student?.retestCount ?? 0}</TableCell>
-              <TableCell>
-                <Button size="small" onClick={() => { setSelectedStudent(r); setOpenModal(true); }}>View</Button>
-                <Tooltip title={maxAttemptsReached ? "Max attempts reached" : ""} arrow>
-                  <span>
-                    <Button size="small" color="warning" sx={{ ml: 1 }} onClick={() => handleRetest(student._id)} disabled={maxAttemptsReached}>Re-test</Button>
-                  </span>
-                </Tooltip>
-              </TableCell>
-            </TableRow>
-          );
-        })
-      )}
-    </TableBody>
-  </Table>
-</TableContainer>
-
-
+                          {sRetest && (
+                            <TableRow sx={{ bgcolor: "#e3f2fd" }}>
+                              <TableCell sx={{ fontWeight: "bold", color: getScoreColor(sRetest.score) }}>{sRetest.score}</TableCell>
+                              <TableCell>{sRetest.total}</TableCell>
+                              <TableCell sx={{ color: "green", fontWeight: "bold" }}>{sRetest.correct}</TableCell>
+                              <TableCell sx={{ color: "red", fontWeight: "bold" }}>{sRetest.wrong}</TableCell>
+                              <TableCell sx={{ color: "orange", fontWeight: "bold" }}>{sRetest.unanswered}</TableCell>
+                              <TableCell sx={{ color: "blue", fontWeight: "bold" }}>{sRetest.percentage}%</TableCell>
+                            </TableRow>
+                          )}
+                        </React.Fragment>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
             <TablePagination component="div" count={sortedResults.length} page={page} onPageChange={handleChangePage} rowsPerPage={rowsPerPage} onRowsPerPageChange={handleChangeRowsPerPage} rowsPerPageOptions={[5, 10, 25, 50]} />
           </>

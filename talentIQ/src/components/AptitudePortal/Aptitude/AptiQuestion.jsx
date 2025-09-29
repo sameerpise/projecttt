@@ -23,8 +23,35 @@ import {
   prevQuestion,
   decrementTimer,
   saveResult,
+  resetQuiz,
 } from "../../Redux/questionSlice";
 import { useNavigate } from "react-router-dom";
+
+// 🎉 Funny Loader Component
+const FunnyLoader = () => (
+  <Box
+    sx={{
+      height: "80vh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 2,
+      fontSize: 50,
+      color: "#1976d2",
+      animation: "bounce 1s infinite",
+      "@keyframes bounce": {
+        "0%, 100%": { transform: "translateY(0)" },
+        "50%": { transform: "translateY(-20px)" },
+      },
+    }}
+  >
+    🧑‍🎓💭📝
+    <Typography variant="h6" sx={{ mt: 2 }}>
+      Loading Your Brain… I mean Test!
+    </Typography>
+  </Box>
+);
 
 export default function AptitudePortal() {
   const dispatch = useDispatch();
@@ -36,37 +63,76 @@ export default function AptitudePortal() {
 
   const [checked, setChecked] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [tabSwitchCount, setTabSwitchCount] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
-const testCompleted = localStorage.getItem("aptiCompleted") === "true";
+  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  if (!student?._id) return;
+  // ✅ Single warning counter for tab-switch & minimize
+  const [warningCount, setWarningCount] = useState(0);
 
-  const checkEligibility = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/results/check/${student._id}`);
-      const data = await res.json();
-      if (!data.allowed) {
-        alert("You have already submitted the test. Wait for admin to allow retest.");
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const testCompleted = localStorage.getItem("aptiCompleted") === "true";
 
-  checkEligibility();
-}, [student, navigate]);
-
-
-
-
-
-  // Fetch questions on mount
+  // Fullscreen on start
   useEffect(() => {
-    if (status === "idle") dispatch(fetchQuestions());
+    const enterFullScreen = () => {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    };
+
+    enterFullScreen();
+
+    return () => {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    };
+  }, []);
+
+  // Check eligibility
+  useEffect(() => {
+    if (!student?._id) return;
+
+    const checkEligibility = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/results/check/${student._id}`);
+        const data = await res.json();
+
+        if (!data.allowed) {
+          alert("You have already submitted the test. Wait for admin to allow retest.");
+          navigate("/dashboard");
+        } else {
+          dispatch(resetQuiz());
+          localStorage.setItem("aptiCompleted", "false");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkEligibility();
+  }, [student, navigate, dispatch]);
+
+  // Fetch questions
+  useEffect(() => {
+    if (status === "idle") {
+      dispatch(fetchQuestions()).finally(() => setLoading(false));
+    }
   }, [status, dispatch]);
 
   // Timer
@@ -102,32 +168,42 @@ useEffect(() => {
     return () => clearInterval(interval);
   }, [timer, dispatch, handleFinish]);
 
-  // Tab switch detection
+  // ✅ Combined tab-switch & window blur warning
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (tabSwitchCount < 3) {
-          const warningNumber = tabSwitchCount + 1;
-          setSnackbarMsg(`⚠ Warning ${warningNumber}: Don't switch tabs!`);
-          setOpenSnackbar(true);
-          setTabSwitchCount((prev) => prev + 1);
-        } else {
-          setSnackbarMsg("❌ Maximum warnings reached. Submitting test...");
-          setOpenSnackbar(true);
-          setTimeout(() => {
-            handleFinish();
-          }, 1000);
-        }
+    const handleWarning = () => {
+      if (warningCount < 3) {
+        const nextWarning = warningCount + 1;
+        setSnackbarMsg(`⚠ Warning ${nextWarning}: Don't switch tabs or minimize the window!`);
+        setOpenSnackbar(true);
+        setWarningCount(nextWarning);
+      } else {
+        setSnackbarMsg("❌ Maximum warnings reached. Submitting test...");
+        setOpenSnackbar(true);
+        setTimeout(() => {
+          handleFinish();
+        }, 1000);
       }
     };
 
+    const handleVisibilityChange = () => {
+      if (document.hidden) handleWarning();
+    };
+
+    const handleWindowBlur = () => {
+      handleWarning();
+    };
+
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleWindowBlur);
+
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [tabSwitchCount, handleFinish]);
+  }, [warningCount, handleFinish]);
 
-  if (status === "loading") return <Typography>Loading Questions...</Typography>;
+  // 🎉 Show Funny Loader while loading
+  if (loading || status === "loading") return <FunnyLoader />;
   if (status === "failed") return <Typography>Error loading questions</Typography>;
   if (!questions.length) return <Typography>No questions found</Typography>;
 
@@ -147,6 +223,11 @@ useEffect(() => {
   const handlePrev = () => {
     setChecked(false);
     dispatch(prevQuestion());
+  };
+
+  const handleSkip = () => {
+    setChecked(false);
+    if (currentQuestion < questions.length - 1) dispatch(nextQuestion());
   };
 
   const formatTime = (seconds) => {
@@ -176,7 +257,6 @@ useEffect(() => {
           borderRadius: 3,
           boxShadow: 4,
           p: 2,
-          height: "490px",
         }}
       >
         <CardContent>
@@ -242,6 +322,9 @@ useEffect(() => {
             <Button variant="outlined" onClick={handlePrev} disabled={currentQuestion === 0} size="small">
               Previous
             </Button>
+            <Button variant="outlined" onClick={handleSkip} size="small">
+              Skip
+            </Button>
             <Button variant="contained" color="success" onClick={handleNext} disabled={!userAnswer} size="small">
               {currentQuestion === questions.length - 1 ? "Finish" : "Next"}
             </Button>
@@ -278,7 +361,7 @@ useEffect(() => {
         </Paper>
       </Modal>
 
-      {/* Tab-switch Snackbar */}
+      {/* Snackbar */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={3000}
