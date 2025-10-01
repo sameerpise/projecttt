@@ -1,5 +1,5 @@
 const express = require("express");
-const Student = require("../Models/studentModel");
+const Student = require("../Models/studentmodel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/authmiddlewaree");
