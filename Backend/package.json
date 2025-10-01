@@ -30,7 +30,7 @@
     "jspdf-autotable": "^5.0.2",
     "mongoose": "^8.18.1",
     "nodemon": "^3.1.10",
-    "react": "^19.1.1",
+    "react": "^18.0.0",
     "react-codemirror2": "^8.0.1",
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",
