@@ -49,7 +49,7 @@ export  function StudentList() {
 
   const fetchResults = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/results");
+      const res = await fetch("https://projecttt-15.onrender.com/api/results");
       const data = await res.json();
       setResults(data);
     } catch (err) {
@@ -204,7 +204,7 @@ export default function AdminPortal() {
   const handleRetest = async (studentId) => {
     if (!window.confirm("Allow this student to retest?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/results/retest/${studentId}`, { method: "POST" });
+      const res = await fetch(`https://projecttt-15.onrender.com/api/results/retest/${studentId}`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       alert(data.message);
