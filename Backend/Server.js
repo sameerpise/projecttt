@@ -11,7 +11,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: "http://localhost:5173","https://projecttt-1678.onrender.com", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",               // local dev
+  "https://projecttt-1611.onrender.com"  // your deployed frontend
+];
+app.use(cors({ origin:allowedOrigins , credentials: true }));
 app.use(express.json());
 
 // Routes
