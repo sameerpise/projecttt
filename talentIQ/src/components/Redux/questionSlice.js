@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const fetchQuestions = createAsyncThunk(
   "quiz/fetchQuestions",
   async () => {
-    const res = await fetch("http://localhost:5000/api/questions");
+    const res = await fetch("https://projecttt-15.onrender.com/api/questions");
     if (!res.ok) throw new Error("Failed to fetch questions");
     return res.json();
   }
@@ -15,7 +15,7 @@ export const saveResult = createAsyncThunk(
   "quiz/saveResult",
   async ({ studentId, questionIds, answers }, { rejectWithValue }) => {
     try {
-      const res = await fetch("http://localhost:5000/api/results/save", {
+      const res = await fetch("https://projecttt-15.onrender.com/api/results/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ studentId, questionIds, answers }),
