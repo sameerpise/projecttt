@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Button, Avatar, Divider, Chip } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../redux/studentSlice";
+import { logout } from "../Redux/studentslice";
 
 export default function Sidebar({ open = true }) {
   const dispatch = useDispatch();
