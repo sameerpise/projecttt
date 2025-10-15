@@ -47,7 +47,7 @@ export default function Login() {
       }
     } else {
       try {
-        const res = await fetch("http://localhost:5000/api/students/login", {
+        const res = await fetch("https://projecttt-15.onrender.com/api/students/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),
