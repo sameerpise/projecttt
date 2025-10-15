@@ -22,7 +22,7 @@ export default function QuestionManager() {
   const [error, setError] = useState("");
 
   const fetchQuestions = async () => {
-    const res = await fetch("http://localhost:5000/api/questions");
+    const res = await fetch("https://projecttt-15.onrender.com/api/questions");
     const data = await res.json();
     setQuestions(data);
   };
@@ -57,7 +57,7 @@ export default function QuestionManager() {
     if (!validateForm()) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/questions/add", {
+      const res = await fetch("https://projecttt-15.onrender.com/api/questions/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
