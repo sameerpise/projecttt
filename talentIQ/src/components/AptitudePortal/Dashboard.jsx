@@ -26,7 +26,7 @@ export default function Dashboard() {
   const fetchStatus = async () => {
     if (!student?._id) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/results/check/${student._id}`);
+      const res = await fetch(`https://projecttt-15.onrender.com/api/results/check/${student._id}`);
       const data = await res.json();
       setModulesStatus({
         apti: !data.allowed,
