@@ -39,7 +39,7 @@ export  function StudentList() {
 
   const fetchStudents = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/students");
+      const res = await fetch("https://projecttt-15.onrender.com/api/students");
       const data = await res.json();
       setStudents(data);
     } catch (err) {
