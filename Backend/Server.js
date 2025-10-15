@@ -6,7 +6,7 @@ const studentRoutes = require("./routes/studentRoutess");
 const questionsRoute = require("./routes/QuestionsRoutes");
 const adminRoutes = require("./routes/adminroute");
 const resultsRouter = require('./routes/result');
-
+ 
 dotenv.config();
 const app = express();
 
