@@ -108,7 +108,7 @@ export default function AptitudePortal() {
 
     const checkEligibility = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/results/check/${student._id}`);
+        const res = await fetch(`https://projecttt-15.onrender.com/api/results/check/${student._id}`);
         const data = await res.json();
 
         if (!data.allowed) {
