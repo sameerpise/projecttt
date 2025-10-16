@@ -24,7 +24,7 @@ export default function AptitudeInstructions() {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else if (countdown === 0 && startClicked) {
-       navigate("/apti");
+       navigate("/dashboard/apti");
     }
   }, [countdown, startClicked, navigate]);
 
