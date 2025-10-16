@@ -20,7 +20,11 @@ export default function Dashboard() {
   );
 
   // Hide sidebar on Aptitude route
-  const isAptitudeRoute = location.pathname.includes("aptii");
+  const isAptitudeRoute =
+  location.pathname.includes("aptii") ||
+  location.pathname.includes("apti") ||
+  location.pathname.includes("gd") ||
+  location.pathname.includes("machine");
 
   // Fetch status
   const fetchStatus = async () => {
