@@ -8,10 +8,10 @@ export default function Sidebar({ open = true }) {
   const student = useSelector((state) => state.student.student);
 
   const handleLogout = () => {
-    dispatch(logout());
-    window.location.href = "/login";
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
-
   return (
     <Box
       sx={{
