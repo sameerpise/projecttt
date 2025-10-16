@@ -2,9 +2,11 @@ import React from "react";
 import { Box, Typography, Button, Avatar, Divider, Chip } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../Redux/studentslice";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar({ open = true }) {
   const dispatch = useDispatch();
+    const navigate = useNavigate();
   const student = useSelector((state) => state.student.student);
 
   const handleLogout = () => {
