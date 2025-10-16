@@ -12,7 +12,7 @@ const app = express();
 
 // Middleware
 const allowedOrigins = [
-  "http://localhost:5173",               // local dev
+               // local dev
   "https://aptitudeportal.onrender.com"  // your deployed frontend
 ];
 app.use(cors({
