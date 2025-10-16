@@ -170,7 +170,7 @@ export default function AdminPortal() {
 
   const fetchResults = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/results");
+      const res = await fetch("https://projecttt-15.onrender.com/api/results");
       if (!res.ok) throw new Error("Failed to fetch results");
       const data = await res.json();
       const uniqueResults = Object.values(
