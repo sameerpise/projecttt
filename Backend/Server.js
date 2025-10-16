@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   "http://localhost:5173",               // local dev
-  "https://aptitude-0jp7.onrender.com"  // your deployed frontend
+  "https://aptitudeportal.onrender.com"  // your deployed frontend
 ];
 app.use(cors({
   origin: function(origin, callback) {
